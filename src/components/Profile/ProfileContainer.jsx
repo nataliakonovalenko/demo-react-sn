@@ -2,12 +2,12 @@ import React from "react";
 import Profile from "./Profile";
 import {connect} from "react-redux";
 import {withRouter} from "react-router-dom";
-import {gerUserProfile, getStatus, updateStatus} from "../../redux/profile-reducer";
+import {gerUserProfile, getStatus, setLargeProfilePhoto, updateStatus} from "../../redux/profile-reducer";
 import {compose} from "redux";
 
 class ProfileContainer extends React.Component {
 
-    componentDidMount() {
+    refreshProfile() {
         let userId = this.props.match.params.userId;
         if(!userId) {
             userId = this.props.authorizedUserId;
@@ -19,12 +19,24 @@ class ProfileContainer extends React.Component {
         this.props.getStatus(userId);
     }
 
+    componentDidMount() {
+        this.refreshProfile();
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (prevProps.match.params.userId != this.props.match.params.userId ) {
+            this.refreshProfile();
+        }
+    }
+
     render() {
         return (
             <Profile {...this.props}
+                     isOwner={!this.props.match.params.userId}
                      profile={this.props.profile}
                      status={this.props.status}
-                     updateStatus={this.props.updateStatus}/>
+                     updateStatus={this.props.updateStatus}
+                     setLargeProfilePhoto={this.props.setLargeProfilePhoto}/>
         )
     }
 }
@@ -39,6 +51,6 @@ let mapStateToProps = (state) => {
 }
 
 export default compose(
-    connect(mapStateToProps, {gerUserProfile, getStatus, updateStatus}),
+    connect(mapStateToProps, {gerUserProfile, getStatus, updateStatus, setLargeProfilePhoto}),
     withRouter
 )(ProfileContainer);

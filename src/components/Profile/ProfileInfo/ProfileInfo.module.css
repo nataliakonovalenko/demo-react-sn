@@ -1,3 +1,7 @@
 .descriptonBlock {
     padding: 10px;
 }
+
+.profilePhoto {
+    max-width: 250px;
+}
